@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { logger } from './middleware/logger.js';
+import cookieParser from 'cookie-parser';
 
 import rootRoutes from './routes/root.js';
 
@@ -16,6 +17,7 @@ console.log(process.env.NODE_ENV);
 app.use(logger);
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Mendapatkan __dirname dalam ES Modules
 const __filename = fileURLToPath(import.meta.url);
