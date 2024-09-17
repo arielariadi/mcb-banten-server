@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { logger } from './middleware/logger.js';
+import errorHandler from './middleware/errorHandle.js';
 import cookieParser from 'cookie-parser';
+import corsOptions from './config/corsOptions.js';
 
 import rootRoutes from './routes/root.js';
 
@@ -15,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 console.log(process.env.NODE_ENV);
 
 app.use(logger);
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -38,5 +40,7 @@ app.all('*', (req, res) => {
     res.type('txt').send('404 Not Found');
   }
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
