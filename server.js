@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { logger } from './middleware/logger.js';
 
 import rootRoutes from './routes/root.js';
 
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 console.log(process.env.NODE_ENV);
 
+app.use(logger);
 app.use(cors());
 app.use(express.json());
 
