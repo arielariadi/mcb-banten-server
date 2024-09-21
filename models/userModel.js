@@ -21,29 +21,47 @@ const userSchema = new mongoose.Schema(
 
     alamat: {
       type: String,
-      required: true,
+      required: function () {
+        return this.role === 'user';
+      },
     },
 
     jenisKelamin: {
       type: String,
-      required: true,
+      required: function () {
+        return this.role === 'user';
+      },
       enum: ['Laki-laki', 'Perempuan'],
     },
 
     tanggalLahir: {
       type: Date,
-      required: true,
+      required: function () {
+        return this.role === 'user';
+      },
     },
 
     noDana: {
       type: String,
-      required: true,
+      required: function () {
+        return this.role === 'user';
+      },
       unique: true,
+      validate: {
+        validator: function (value) {
+          return /^08\d{0,11}$/.test(value); // Memastikan dimulai dengan "08" dan maksimal 13 digit
+        },
+        message: (props) =>
+          `${props.value} tidak valid! Nomor dana harus dimulai dengan "08" dan terdiri dari maksimal 13 digit.`,
+      },
     },
 
     totalReward: {
       type: Number,
       default: 0,
+      required: function () {
+        return this.role === 'user';
+      },
     },
 
     role: {

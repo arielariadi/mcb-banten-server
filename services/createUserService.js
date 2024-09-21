@@ -1,7 +1,7 @@
 import User from '../models/userModel.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
-async function createUser(userData) {
+async function createUserService(userData) {
   const {
     username,
     email,
@@ -29,4 +29,4 @@ async function createUser(userData) {
   return savedUser;
 }
 
-export { createUser };
+export default createUserService;

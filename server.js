@@ -10,7 +10,8 @@ import corsOptions from './config/corsOptions.js';
 import connectDB from './config/dbConn.js';
 import mongoose from 'mongoose';
 
-import rootRoutes from './routes/root.js';
+import rootRoute from './routes/root.js';
+import registerRoute from './routes/register.js';
 
 dotenv.config();
 const app = express();
@@ -32,7 +33,8 @@ const __dirname = path.dirname(__filename);
 app.use('/', express.static(path.join(__dirname, 'public'))); // Memberitahu server bahwa file public ada di folder public
 
 // Routes
-app.use('/', rootRoutes);
+app.use('/', rootRoute);
+app.use('/v1/register', registerRoute);
 
 app.all('*', (req, res) => {
   res.status(404);
