@@ -13,6 +13,7 @@ import createAdminAccount from './seeders/adminSeed.js';
 
 import rootRoute from './routes/root.js';
 import registerRoute from './routes/register.js';
+import loginRoute from './routes/login.js';
 
 dotenv.config();
 const app = express();
@@ -38,6 +39,7 @@ createAdminAccount();
 // Routes
 app.use('/', rootRoute);
 app.use('/v1/register', registerRoute);
+app.use('/v1/login', loginRoute);
 
 app.all('*', (req, res) => {
   res.status(404);

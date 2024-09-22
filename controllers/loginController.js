@@ -1,4 +1,4 @@
-import loginService from '../services/loginService';
+import loginService from '../services/loginService.js';
 import asyncHandler from 'express-async-handler';
 
 const login = asyncHandler(async (req, res) => {
