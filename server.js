@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import corsOptions from './config/corsOptions.js';
 import connectDB from './config/dbConn.js';
 import mongoose from 'mongoose';
+import createAdminAccount from './seeders/adminSeed.js';
 
 import rootRoute from './routes/root.js';
 import registerRoute from './routes/register.js';
@@ -31,6 +32,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use('/', express.static(path.join(__dirname, 'public'))); // Memberitahu server bahwa file public ada di folder public
+
+createAdminAccount();
 
 // Routes
 app.use('/', rootRoute);
