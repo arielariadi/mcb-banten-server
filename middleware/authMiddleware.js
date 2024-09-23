@@ -29,4 +29,8 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-export default authenticateToken;
+const verifyToken = (token) => {
+  return jwt.verify(token, process.env.SECRET_KEY);
+};
+
+export { authenticateToken, verifyToken };
