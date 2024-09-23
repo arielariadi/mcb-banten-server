@@ -5,7 +5,7 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const token = await loginService(email, password);
-  res.json({ token: token });
+  res.status(200).res.json({ message: 'Login success!', token: token });
 });
 
 export default login;
