@@ -1,7 +1,6 @@
 import User from '../models/userModel.js';
 import Task from '../models/taskModel.js';
 import asyncHandler from 'express-async-handler';
-import mongoose from 'mongoose';
 
 // @desc Get all users
 // @route GET /v1/admin/list-users

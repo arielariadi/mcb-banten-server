@@ -13,7 +13,7 @@ import createAdminAccount from './seeders/adminSeed.js';
 
 import rootRoute from './routes/root.js';
 import authRoute from './routes/auth.js';
-// import userRoute from './routes/user.js';
+import userRoute from './routes/user.js';
 import adminRoute from './routes/admin.js';
 
 dotenv.config();
@@ -41,7 +41,7 @@ createAdminAccount();
 app.use('/', rootRoute);
 app.use('/v1/auth', authRoute);
 
-// app.use('/v1/user', userRoute);
+app.use('/v1/user', userRoute);
 app.use('/v1/admin', adminRoute);
 
 app.all('*', (req, res) => {

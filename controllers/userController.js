@@ -1,12 +1,24 @@
-// import User from '../models/userModel.js';
-// import asyncHandler from 'express-async-handler';
+import User from '../models/userModel.js';
+import Task from '../models/taskModel.js';
+import asyncHandler from 'express-async-handler';
 
-// const getAllUsers = asyncHandler(async (req, res) => {
-//   const users = await User.find().select('-password').lean();
+// @desc Get all tasks
+// @route GET /v1/user/list-tasks
+// @access Private
+const getAllTasks = asyncHandler(async (req, res) => {
+  const tasks = await Task.find().lean();
 
-//   res
-//     .status(200)
-//     .json({ status: 'success', message: 'Success get all users', data: users });
-// });
+  if (!tasks) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'Tidak ada tugas!' });
+  }
 
-// export { getAllUsers };
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua tugas',
+    data: tasks,
+  });
+});
+
+export { getAllTasks };
