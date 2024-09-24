@@ -1,4 +1,6 @@
 node_modules
 .env
 logs
+public/images/taskImages/*
+!public/images/taskImages/.gitkeep
 userStories.md
