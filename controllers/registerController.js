@@ -3,7 +3,7 @@ import createUserService from '../services/createUserService.js';
 import asyncHandler from 'express-async-handler';
 
 const createNewUser = asyncHandler(async (req, res) => {
-  const { username, email, noDana, ...userData } = req.body;
+  const { username, email, noHp, ...userData } = req.body;
 
   // Confirm required data
   if (!userData) {
@@ -28,9 +28,9 @@ const createNewUser = asyncHandler(async (req, res) => {
       .json({ status: 'fail', message: 'Email sudah digunakan!' });
   }
 
-  // Check for duplicate noDana
-  const duplicateNoDana = await User.findOne({ noDana }).lean().exec();
-  if (duplicateNoDana) {
+  // Check for duplicate noHp
+  const duplicateNoHp = await User.findOne({ noHp }).lean().exec();
+  if (duplicateNoHp) {
     return res
       .status(409)
       .json({ status: 'fail', message: 'Nomor Dana sudah digunakan!' });
@@ -40,7 +40,7 @@ const createNewUser = asyncHandler(async (req, res) => {
   const user = await createUserService({
     username,
     email,
-    noDana,
+    noHp,
     ...userData,
   });
   if (user) {

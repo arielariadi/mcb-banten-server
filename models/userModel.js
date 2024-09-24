@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    noDana: {
+    noHp: {
       type: String,
       required: function () {
         return this.role === 'user';
@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
           return /^08\d{0,11}$/.test(value); // Memastikan dimulai dengan "08" dan maksimal 13 digit
         },
         message: (props) =>
-          `${props.value} tidak valid! Nomor dana harus dimulai dengan "08" dan terdiri dari maksimal 13 digit.`,
+          `${props.value} tidak valid! Nomor HP harus dimulai dengan "08" dan terdiri dari maksimal 13 digit.`,
       },
     },
 
