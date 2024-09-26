@@ -8,7 +8,15 @@ import mongoose from 'mongoose';
 // @route GET /v1/user/list-tasks
 // @access Private
 const getAllTasks = asyncHandler(async (req, res) => {
-  const tasks = await Task.find().lean();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  // Hitung jumlah total tasks
+  const totalTasks = await Task.countDocuments();
+  const totalPage = Math.ceil(totalTasks / limit);
+
+  const tasks = await Task.find().skip(offset).limit(limit).lean();
 
   if (!tasks) {
     return res
@@ -20,6 +28,11 @@ const getAllTasks = asyncHandler(async (req, res) => {
     status: 'success',
     message: 'Sukses mengambil semua tugas',
     data: tasks,
+    pagination: {
+      totalTasks,
+      currentPage: page,
+      totalPage,
+    },
   });
 });
 
