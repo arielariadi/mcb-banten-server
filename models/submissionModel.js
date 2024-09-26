@@ -42,6 +42,10 @@ const submissionSchema = new mongoose.Schema({
   validatedAt: {
     type: Date,
   },
+
+  rejectedReason: {
+    type: String,
+  },
 });
 
 export default mongoose.model('Submission', submissionSchema);

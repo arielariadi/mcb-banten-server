@@ -79,7 +79,7 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
 // @route POST /v1/admin/accept-submission
 // @access Private/Admin
 const acceptSubmission = asyncHandler(async (req, res) => {
-  const { id } = req.body;
+  const { id, rejectedReason } = req.body;
 
   if (!id) {
     return res
@@ -101,6 +101,7 @@ const acceptSubmission = asyncHandler(async (req, res) => {
   submission.status = 'accepted';
   submission.validatedBy = req.user.id;
   submission.validatedAt = Date.now();
+  submission.rejectedReason = rejectedReason;
 
   // Simpan submission yang telah diperbarui
   const updatedSubmission = await submission.save();
