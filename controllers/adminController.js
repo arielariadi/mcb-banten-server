@@ -66,12 +66,26 @@ const createNewTask = asyncHandler(async (req, res) => {
 // @route GET /v1/admin/list-submissions
 // @access Private/Admin
 const getAllSubmissions = asyncHandler(async (req, res) => {
-  const submissions = await Submission.find().lean();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  // Hitung jumlah total submissions
+  const totalSubmissions = await Submission.countDocuments();
+  const totalPage = Math.ceil(totalSubmissions / limit);
+
+  // Ambil submissions dengan pagination
+  const submissions = await Submission.find().skip(offset).limit(limit).lean();
 
   res.status(200).json({
     status: 'success',
     message: 'Sukses mengambil semua submissions',
     data: submissions,
+    pagination: {
+      totalSubmissions,
+      currentPage: page,
+      totalPage,
+    },
   });
 });
 
