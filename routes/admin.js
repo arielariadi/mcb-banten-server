@@ -4,7 +4,11 @@ const router = express.Router();
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import isAdmin from '../middleware/adminMiddleware.js';
 import taskImage from '../middleware/taskImageMiddleware.js';
-import { getAllUsers, createNewTask } from '../controllers/adminController.js';
+import {
+  getAllUsers,
+  createNewTask,
+  getAllSubmissions,
+} from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
 
@@ -19,5 +23,8 @@ router.post(
   taskImage.single('image'),
   createNewTask,
 );
+
+// Endpoint untuk mendapatkan semua submissions
+router.get('/list-submissions', authenticateToken, getAllSubmissions);
 
 export default router;

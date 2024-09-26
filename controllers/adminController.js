@@ -1,5 +1,6 @@
 import User from '../models/userModel.js';
 import Task from '../models/taskModel.js';
+import Submission from '../models/submissionModel.js';
 import asyncHandler from 'express-async-handler';
 
 // @desc Get all users
@@ -8,9 +9,11 @@ import asyncHandler from 'express-async-handler';
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find().select('-password').lean();
 
-  res
-    .status(200)
-    .json({ status: 'success', message: 'Success get all users', data: users });
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua user',
+    data: users,
+  });
 });
 
 // @desc Create new Task
@@ -47,9 +50,11 @@ const createNewTask = asyncHandler(async (req, res) => {
 
   if (task) {
     // Created
-    return res
-      .status(201)
-      .json({ status: 'success', message: 'Task created!', data: task });
+    return res.status(201).json({
+      status: 'success',
+      message: 'Tugas berhasil dibuat',
+      data: task,
+    });
   } else {
     return res
       .status(400)
@@ -57,4 +62,17 @@ const createNewTask = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllUsers, createNewTask };
+// @desc Get all submissions
+// @route GET /v1/admin/list-submissions
+// @access Private/Admin
+const getAllSubmissions = asyncHandler(async (req, res) => {
+  const submissions = await Submission.find().lean();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua submissions',
+    data: submissions,
+  });
+});
+
+export { getAllUsers, createNewTask, getAllSubmissions };
