@@ -1,5 +1,6 @@
 import User from '../models/userModel.js';
 import Task from '../models/taskModel.js';
+import Submission from '../models/submissionModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
@@ -47,4 +48,38 @@ const getTaskById = asyncHandler(async (req, res) => {
   });
 });
 
-export { getAllTasks, getTaskById };
+// @desc Submit completed task
+// @route POST /v1/user/submit-task
+// @access Private
+const submitCompletedTask = asyncHandler(async (req, res) => {
+  const { user, task, description } = req.body;
+  const taskScreenshot = req.file.path;
+
+  if (!user || !task || !taskScreenshot || !description) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'Tolong isi semua data!' });
+  }
+
+  const submission = await Submission.create({
+    user,
+    task,
+    taskScreenshot,
+    description,
+  });
+
+  if (submission) {
+    return res.status(201).json({
+      status: 'success',
+      message: 'Tugas selesai ditambahkan!',
+      data: submission,
+    });
+  } else {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Tidak dapat menambahkan tugas!',
+    });
+  }
+});
+
+export { getAllTasks, getTaskById, submitCompletedTask };

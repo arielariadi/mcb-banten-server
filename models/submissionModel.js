@@ -13,7 +13,7 @@ const submissionSchema = new mongoose.Schema({
     required: true,
   },
 
-  screenShotUrl: {
+  taskScreenshot: {
     type: String,
     required: true,
   },
@@ -29,9 +29,18 @@ const submissionSchema = new mongoose.Schema({
     default: 'pending',
   },
 
+  submittedAt: {
+    type: Date,
+    default: Date.now,
+  },
+
   validatedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  },
+
+  validatedAt: {
+    type: Date,
   },
 });
 
