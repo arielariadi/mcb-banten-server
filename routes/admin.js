@@ -9,6 +9,7 @@ import {
   createNewTask,
   getAllSubmissions,
   acceptSubmission,
+  rejectSubmission,
 } from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
@@ -34,6 +35,14 @@ router.patch(
   authenticateToken,
   isAdmin,
   acceptSubmission,
+);
+
+// Endpoint untuk menolak submission user
+router.patch(
+  '/reject-submission',
+  authenticateToken,
+  isAdmin,
+  rejectSubmission,
 );
 
 export default router;

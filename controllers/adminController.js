@@ -90,7 +90,7 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
 });
 
 // @desc Accept submission
-// @route POST /v1/admin/accept-submission
+// @route PATCH /v1/admin/accept-submission
 // @access Private/Admin
 const acceptSubmission = asyncHandler(async (req, res) => {
   const { id, rejectedReason } = req.body;
@@ -142,4 +142,48 @@ const acceptSubmission = asyncHandler(async (req, res) => {
   });
 });
 
-export { getAllUsers, createNewTask, getAllSubmissions, acceptSubmission };
+// @desc Reject submission
+// @route PATCH /v1/admin/reject-submission
+// @access Private/Admin
+const rejectSubmission = asyncHandler(async (req, res) => {
+  const { id, rejectedReason } = req.body;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'ID tidak ditemukan!' });
+  }
+
+  // Cari submission berdasarkan ID
+  const submission = await Submission.findById(id).populate('task user').exec();
+
+  if (!submission) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Submission tidak ditemukan!',
+    });
+  }
+
+  // Update status submission dan tambahkan validatedBy serta validatedAt
+  submission.status = 'rejected';
+  submission.validatedBy = req.user.id;
+  submission.validatedAt = Date.now();
+  submission.rejectedReason = rejectedReason;
+
+  // Simpan submission yang telah diperbarui
+  const updatedSubmission = await submission.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Submission ditolak!',
+    data: updatedSubmission,
+  });
+});
+
+export {
+  getAllUsers,
+  createNewTask,
+  getAllSubmissions,
+  acceptSubmission,
+  rejectSubmission,
+};

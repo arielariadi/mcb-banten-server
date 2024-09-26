@@ -33,7 +33,7 @@ const createNewUser = asyncHandler(async (req, res) => {
   if (duplicateNoHp) {
     return res
       .status(409)
-      .json({ status: 'fail', message: 'Nomor Dana sudah digunakan!' });
+      .json({ status: 'fail', message: 'Nomor HP sudah digunakan!' });
   }
 
   // Create and store new user
