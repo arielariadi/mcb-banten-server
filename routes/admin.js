@@ -8,6 +8,7 @@ import {
   getAllUsers,
   createNewTask,
   getAllSubmissions,
+  acceptSubmission,
 } from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
@@ -25,6 +26,14 @@ router.post(
 );
 
 // Endpoint untuk mendapatkan semua submissions
-router.get('/list-submissions', authenticateToken, getAllSubmissions);
+router.get('/list-submissions', authenticateToken, isAdmin, getAllSubmissions);
+
+// Endpoint untuk menerima submission user
+router.patch(
+  '/accept-submission',
+  authenticateToken,
+  isAdmin,
+  acceptSubmission,
+);
 
 export default router;
