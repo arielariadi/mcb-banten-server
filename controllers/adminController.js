@@ -142,6 +142,13 @@ const acceptSubmission = asyncHandler(async (req, res) => {
     });
   }
 
+  if (submission.status === 'accepted' || submission.status === 'rejected') {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Submission sudah diproses sebelumnya!',
+    });
+  }
+
   // Update status submission dan tambahkan validatedBy serta validatedAt
   submission.status = 'accepted';
   submission.validatedBy = req.user.id;

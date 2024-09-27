@@ -42,6 +42,42 @@ const getSubmissionsHistory = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc Get all user withdrawals history
+// @route GET /v1/user/withdrawals-history
+// @access Private
+const getWithdrawalsHistory = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  const userId = req.user.id;
+
+  const totalWithdrawals = await Withdrawal.countDocuments({ user: userId });
+  const totalPage = Math.ceil(totalWithdrawals / limit);
+
+  const withdrawals = await Withdrawal.find({ user: userId })
+    .skip(offset)
+    .limit(limit)
+    .lean();
+
+  if (!withdrawals) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'Riwayat penarikan tidak ditemukan!' });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua riwayat penarikan',
+    data: withdrawals,
+    pagination: {
+      totalWithdrawals,
+      currentPage: page,
+      totalPage,
+    },
+  });
+});
+
 // @desc Get all tasks
 // @route GET /v1/user/list-tasks
 // @access Private
@@ -204,4 +240,5 @@ export {
   submitCompletedTask,
   requestWithdrawal,
   getSubmissionsHistory,
+  getWithdrawalsHistory,
 };

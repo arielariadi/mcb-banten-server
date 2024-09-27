@@ -8,12 +8,16 @@ import {
   submitCompletedTask,
   requestWithdrawal,
   getSubmissionsHistory,
+  getWithdrawalsHistory,
 } from '../controllers/userController.js';
 
 import proofOfTasks from '../middleware/proofOfTaskMiddleware.js';
 
 // Endpoint untuk mendapatkan riwayat submission (untuk dashboard user)
 router.get('/submissions-history', authenticateToken, getSubmissionsHistory);
+
+// Endpoint untuk mendapatkan riwayat penarikan (untuk dashboard user)
+router.get('/withdrawals-history', authenticateToken, getWithdrawalsHistory);
 
 // Endpoint untuk mendapatkan semua tugas
 router.get('/list-tasks', authenticateToken, getAllTasks);
