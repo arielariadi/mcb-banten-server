@@ -152,7 +152,7 @@ const rejectSubmission = asyncHandler(async (req, res) => {
 
   if (!id) {
     return res
-      .status(400)
+      .status(404)
       .json({ status: 'fail', message: 'ID tidak ditemukan!' });
   }
 
@@ -200,7 +200,7 @@ const acceptRequestWithdrawal = asyncHandler(async (req, res) => {
   if (!withdrawal) {
     return res.status(404).json({
       status: 'fail',
-      message: 'Penarikan tidak ditemukan!',
+      message: 'Request penarikan tidak ditemukan!',
     });
   }
 
@@ -259,6 +259,60 @@ const acceptRequestWithdrawal = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Reject request withdrawal
+// @route PATCH /v1/admin/reject-withdrawal
+// @access Private/Admin
+const rejectRequestWithdrawal = asyncHandler(async (req, res) => {
+  const { id, rejectedReason } = req.body;
+
+  if (!id) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'ID tidak ditemukan!',
+    });
+  }
+
+  // Cari withdrawal berdasarkan ID
+  const withdrawal = await Withdrawal.findById(id).populate('user').exec();
+
+  if (!withdrawal) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Request penarikan tidak ditemukan!',
+    });
+  }
+
+  // Periksa apakah withdrawal sudah diterima atau ditolak
+  if (withdrawal.status === 'accepted' || withdrawal.status === 'rejected') {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Penarikan sudah diproses sebelumnya!',
+    });
+  }
+
+  // Update status withdrawal dan tambahkan rejectedBy serta rejectedAt
+  withdrawal.status = 'rejected';
+  withdrawal.rejectedBy = req.user.id;
+  withdrawal.rejectedAt = Date.now();
+  withdrawal.rejectedReason = rejectedReason;
+
+  // Simpan withdrawal yang telah diperbarui
+  const updatedWithdrawal = await withdrawal.save();
+
+  if (updatedWithdrawal) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Request penarikan ditolak!',
+      data: updatedWithdrawal,
+    });
+  } else {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Request penarikan gagal ditolak!',
+    });
+  }
+});
+
 export {
   getAllUsers,
   createNewTask,
@@ -266,4 +320,5 @@ export {
   acceptSubmission,
   rejectSubmission,
   acceptRequestWithdrawal,
+  rejectRequestWithdrawal,
 };

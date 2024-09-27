@@ -11,6 +11,7 @@ import {
   acceptSubmission,
   rejectSubmission,
   acceptRequestWithdrawal,
+  rejectRequestWithdrawal,
 } from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
@@ -52,6 +53,14 @@ router.patch(
   authenticateToken,
   isAdmin,
   acceptRequestWithdrawal,
+);
+
+// Endpoint untuk menolak request penarikan user
+router.patch(
+  '/reject-withdrawal',
+  authenticateToken,
+  isAdmin,
+  rejectRequestWithdrawal,
 );
 
 export default router;
