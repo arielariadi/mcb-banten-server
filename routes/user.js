@@ -7,9 +7,13 @@ import {
   getTaskById,
   submitCompletedTask,
   requestWithdrawal,
+  getSubmissionsHistory,
 } from '../controllers/userController.js';
 
 import proofOfTasks from '../middleware/proofOfTaskMiddleware.js';
+
+// Endpoint untuk mendapatkan riwayat submission (untuk dashboard user)
+router.get('/submissions-history', authenticateToken, getSubmissionsHistory);
 
 // Endpoint untuk mendapatkan semua tugas
 router.get('/list-tasks', authenticateToken, getAllTasks);

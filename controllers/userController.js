@@ -6,6 +6,42 @@ import Withdrawal from '../models/withdrawalModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
+// @desc Get all user submissions history
+// @route GET /v1/user/submissions-history
+// @access Private
+const getSubmissionsHistory = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  const userId = req.user.id;
+
+  const totalSubmissions = await Submission.countDocuments({ user: userId });
+  const totalPage = Math.ceil(totalSubmissions / limit);
+
+  const submissions = await Submission.find({ user: userId })
+    .skip(offset)
+    .limit(limit)
+    .lean();
+
+  if (!submissions) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'Riwayat submission tidak ditemukan!' });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua riwayat submission',
+    data: submissions,
+    pagination: {
+      totalSubmissions,
+      currentPage: page,
+      totalPage,
+    },
+  });
+});
+
 // @desc Get all tasks
 // @route GET /v1/user/list-tasks
 // @access Private
@@ -162,4 +198,10 @@ const requestWithdrawal = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllTasks, getTaskById, submitCompletedTask, requestWithdrawal };
+export {
+  getAllTasks,
+  getTaskById,
+  submitCompletedTask,
+  requestWithdrawal,
+  getSubmissionsHistory,
+};
