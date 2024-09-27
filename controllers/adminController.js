@@ -64,6 +64,35 @@ const createNewTask = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Delete task
+// @route DELETE /v1/admin/delete-task
+// @access Private/Admin
+const deleteTask = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'ID tidak ditemukan!',
+    });
+  }
+
+  const task = await Task.findById(id).exec();
+
+  if (!task) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Tugas tidak ditemukan!',
+    });
+  }
+
+  await task.deleteOne();
+
+  const reply = `Tugas dengan title '${task.title}' dengan ID '${task._id}' telah dihapus`;
+
+  res.status(200).json({ status: 'success', message: reply });
+});
+
 // @desc Get all submissions
 // @route GET /v1/admin/list-submissions
 // @access Private/Admin
@@ -321,4 +350,5 @@ export {
   rejectSubmission,
   acceptRequestWithdrawal,
   rejectRequestWithdrawal,
+  deleteTask,
 };

@@ -12,6 +12,7 @@ import {
   rejectSubmission,
   acceptRequestWithdrawal,
   rejectRequestWithdrawal,
+  deleteTask,
 } from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
@@ -62,5 +63,8 @@ router.patch(
   isAdmin,
   rejectRequestWithdrawal,
 );
+
+// Endpoint untuk menghapus task
+router.delete('/delete-task', authenticateToken, isAdmin, deleteTask);
 
 export default router;
