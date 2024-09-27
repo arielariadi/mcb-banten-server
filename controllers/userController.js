@@ -1,6 +1,8 @@
 import User from '../models/userModel.js';
 import Task from '../models/taskModel.js';
 import Submission from '../models/submissionModel.js';
+import Withdrawal from '../models/withdrawalModel.js';
+
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
@@ -65,17 +67,25 @@ const getTaskById = asyncHandler(async (req, res) => {
 // @route POST /v1/user/submit-task
 // @access Private
 const submitCompletedTask = asyncHandler(async (req, res) => {
-  const { user, task, description } = req.body;
+  const { task, description } = req.body;
   const taskScreenshot = req.file.path;
 
-  if (!user || !task || !taskScreenshot || !description) {
+  if (!task || !taskScreenshot || !description) {
     return res
       .status(400)
       .json({ status: 'fail', message: 'Tolong isi semua data!' });
   }
 
+  // Dapatkan user dari token autentikasi
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: 'fail', message: 'User tidak ditemukan!' });
+  }
+
   const submission = await Submission.create({
-    user,
+    user: user.id,
     task,
     taskScreenshot,
     description,
@@ -95,4 +105,61 @@ const submitCompletedTask = asyncHandler(async (req, res) => {
   }
 });
 
-export { getAllTasks, getTaskById, submitCompletedTask };
+// @desc Request withdrawal
+// @route POST /v1/user/request-withdrawal
+// @access Private
+const requestWithdrawal = asyncHandler(async (req, res) => {
+  const { paymentMethod, paymentMethodNumber, amount } = req.body;
+
+  if (!paymentMethod || !paymentMethodNumber || !amount) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Tolong isi semua data!',
+    });
+  }
+
+  // Dapatkan user dari token autentikasi
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'User tidak ditemukan!',
+    });
+  }
+
+  if (user.totalReward < 250000) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Anda harus memiliki minimal 250.000 reward!',
+    });
+  }
+
+  if (amount > user.totalReward || amount <= 0) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Jumlah penarikan tidak valid!',
+    });
+  }
+
+  const withdrawal = await Withdrawal.create({
+    user: user.id,
+    paymentMethod,
+    paymentMethodNumber,
+    amount,
+  });
+  if (withdrawal) {
+    return res.status(201).json({
+      status: 'success',
+      message: `Penarikan uang dengan jumlah ${amount} berhasil dilakukan`,
+      data: withdrawal,
+    });
+  } else {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Gagal melakukan penarikan uang!',
+    });
+  }
+});
+
+export { getAllTasks, getTaskById, submitCompletedTask, requestWithdrawal };

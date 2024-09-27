@@ -6,6 +6,7 @@ import {
   getAllTasks,
   getTaskById,
   submitCompletedTask,
+  requestWithdrawal,
 } from '../controllers/userController.js';
 
 import proofOfTasks from '../middleware/proofOfTaskMiddleware.js';
@@ -23,4 +24,7 @@ router.post(
   proofOfTasks.single('taskScreenshot'),
   submitCompletedTask,
 );
+
+// Endpoint untuk melakukan request penarikan pada user
+router.post('/request-withdrawal', authenticateToken, requestWithdrawal);
 export default router;
