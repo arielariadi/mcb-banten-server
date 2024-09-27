@@ -1,6 +1,8 @@
 import User from '../models/userModel.js';
 import Task from '../models/taskModel.js';
 import Submission from '../models/submissionModel.js';
+import Withdrawal from '../models/withdrawalModel.js';
+
 import asyncHandler from 'express-async-handler';
 
 // @desc Get all users
@@ -180,10 +182,88 @@ const rejectSubmission = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc Accept request withdrawal
+// @route PATCH /v1/admin/accept-withdrawal
+// @access Private/Admin
+const acceptRequestWithdrawal = asyncHandler(async (req, res) => {
+  const { id, rejectedReason } = req.body;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'ID tidak ditemukan!' });
+  }
+
+  // Cari withdrawal berdasarkan ID
+  const withdrawal = await Withdrawal.findById(id).populate('user').exec();
+
+  if (!withdrawal) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Penarikan tidak ditemukan!',
+    });
+  }
+
+  // Periksa apakah withdrawal sudah diterima atau ditolak
+  if (withdrawal.status === 'accepted' || withdrawal.status === 'rejected') {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Penarikan sudah diproses sebelumnya!',
+    });
+  }
+
+  // Ambil user dari withdrawal
+  const user = await User.findById(withdrawal.user);
+
+  if (!user) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'User tidak ditemukan!',
+    });
+  }
+
+  // Pastikan user memiliki cukup totalReward untuk penarikan
+  if (user.totalReward < withdrawal.amount) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User tidak memiliki cukup reward untuk penarikan!',
+    });
+  }
+
+  // Update status withdrawal dan tambahkan validatedBy serta validatedAt
+  withdrawal.status = 'accepted';
+  withdrawal.validatedBy = req.user.id;
+  withdrawal.validatedAt = Date.now();
+  withdrawal.rejectedReason = rejectedReason;
+
+  // Kurangi total reward user berdasarkan amount
+  user.totalReward -= withdrawal.amount;
+
+  // Simpan perubahan pada user
+  await user.save();
+
+  // Simpan withdrawal yang telah diperbarui
+  const updatedWithdrawal = await withdrawal.save();
+
+  if (updatedWithdrawal) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Penarikan diterima dan total reward user telah diperbarui!',
+      data: updatedWithdrawal,
+    });
+  } else {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Penarikan gagal diterima!',
+    });
+  }
+});
+
 export {
   getAllUsers,
   createNewTask,
   getAllSubmissions,
   acceptSubmission,
   rejectSubmission,
+  acceptRequestWithdrawal,
 };

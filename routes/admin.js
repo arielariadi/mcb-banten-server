@@ -10,6 +10,7 @@ import {
   getAllSubmissions,
   acceptSubmission,
   rejectSubmission,
+  acceptRequestWithdrawal,
 } from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
@@ -43,6 +44,14 @@ router.patch(
   authenticateToken,
   isAdmin,
   rejectSubmission,
+);
+
+// Endpoint untuk menerima request penarikan user
+router.patch(
+  '/accept-withdrawal',
+  authenticateToken,
+  isAdmin,
+  acceptRequestWithdrawal,
 );
 
 export default router;

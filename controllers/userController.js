@@ -151,13 +151,13 @@ const requestWithdrawal = asyncHandler(async (req, res) => {
   if (withdrawal) {
     return res.status(201).json({
       status: 'success',
-      message: `Penarikan uang dengan jumlah ${amount} berhasil dilakukan`,
+      message: `Request penarikan uang dengan jumlah ${amount} berhasil dilakukan`,
       data: withdrawal,
     });
   } else {
     return res.status(400).json({
       status: 'fail',
-      message: 'Gagal melakukan penarikan uang!',
+      message: 'Gagal melakukan request penarikan uang!',
     });
   }
 });
