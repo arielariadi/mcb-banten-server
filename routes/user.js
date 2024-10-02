@@ -20,7 +20,7 @@ router.get('/submissions-history', authenticateToken, getSubmissionsHistory);
 router.get('/withdrawals-history', authenticateToken, getWithdrawalsHistory);
 
 // Endpoint untuk mendapatkan semua tugas
-router.get('/list-tasks', authenticateToken, getAllTasks);
+router.get('/tasks-list', authenticateToken, getAllTasks);
 
 // Endpoint untuk mendapatkan tugas berdasarkan ID
 router.get('/task/:id', authenticateToken, getTaskById);

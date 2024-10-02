@@ -18,7 +18,7 @@ import {
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
 
 // Endpoint untuk mendapatkan semua user
-router.get('/list-users', authenticateToken, isAdmin, getAllUsers);
+router.get('/users-list', authenticateToken, isAdmin, getAllUsers);
 
 // Endpoint untuk membuat task
 router.post(
@@ -30,7 +30,7 @@ router.post(
 );
 
 // Endpoint untuk mendapatkan semua submissions
-router.get('/list-submissions', authenticateToken, isAdmin, getAllSubmissions);
+router.get('/submission-list', authenticateToken, isAdmin, getAllSubmissions);
 
 // Endpoint untuk menerima submission user
 router.patch(

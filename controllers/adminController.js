@@ -9,12 +9,25 @@ import asyncHandler from 'express-async-handler';
 // @route GET /v1/admin/list-users
 // @access Private/Admin
 const getAllUsers = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  // Hitung jumlah total user
+  const totalUsers = await User.countDocuments();
+  const totalPage = Math.ceil(totalUsers / limit);
+
   const users = await User.find().select('-password').lean();
 
   res.status(200).json({
     status: 'success',
     message: 'Sukses mengambil semua user',
     data: users,
+    pagination: {
+      totalUsers,
+      currentPage: page,
+      totalPage,
+    },
   });
 });
 
@@ -101,7 +114,7 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const offset = (page - 1) * limit;
 
-  // Hitung jumlah total submissions
+  // Hitung jumlah total submission
   const totalSubmissions = await Submission.countDocuments();
   const totalPage = Math.ceil(totalSubmissions / limit);
 
