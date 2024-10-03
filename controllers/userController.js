@@ -140,9 +140,12 @@ const getTaskById = asyncHandler(async (req, res) => {
 // @access Private
 const submitCompletedTask = asyncHandler(async (req, res) => {
   const { task, description } = req.body;
-  const taskScreenshot = req.file.path;
 
-  if (!task || !taskScreenshot || !description) {
+  // Ambil nama file dari req.file
+  const taskScreenshot = req.file.path.replace(/^.*[\\\/]/, '');
+  const relativeImagePath = `images/proofOfTasks/${taskScreenshot}`; // jalur relatif gambar
+
+  if (!task || !relativeImagePath || !description) {
     return res
       .status(400)
       .json({ status: 'fail', message: 'Tolong isi semua data!' });
@@ -159,7 +162,7 @@ const submitCompletedTask = asyncHandler(async (req, res) => {
   const submission = await Submission.create({
     user: user.id,
     task,
-    taskScreenshot,
+    taskScreenshot: relativeImagePath,
     description,
   });
 
