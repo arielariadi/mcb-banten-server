@@ -36,10 +36,19 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @access Private/Admin
 const createNewTask = asyncHandler(async (req, res) => {
   const { title, description, socialMediaUrl, reward } = req.body;
-  const image = req.file.path;
+
+  // Ambil nama file dari req.file
+  const image = req.file.path.replace(/^.*[\\\/]/, '');
+  const relativeImagePath = `images/taskImages/${image}`; // jalur relatif gambar
 
   // Confirm data
-  if (!title || !description || !image || !socialMediaUrl || !reward) {
+  if (
+    !title ||
+    !description ||
+    !relativeImagePath ||
+    !socialMediaUrl ||
+    !reward
+  ) {
     return res
       .status(400)
       .json({ status: 'fail', message: 'Tolong isi semua data!' });
@@ -57,7 +66,7 @@ const createNewTask = asyncHandler(async (req, res) => {
   const task = await Task.create({
     title,
     description,
-    image,
+    image: relativeImagePath,
     socialMediaUrl,
     reward,
     createdBy: req.user.id,
