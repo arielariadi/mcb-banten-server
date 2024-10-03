@@ -5,6 +5,9 @@ import Withdrawal from '../models/withdrawalModel.js';
 
 import asyncHandler from 'express-async-handler';
 
+import fs from 'fs';
+import path from 'path';
+
 // @desc Get all users
 // @route GET /v1/admin/list-users
 // @access Private/Admin
@@ -108,6 +111,26 @@ const deleteTask = asyncHandler(async (req, res) => {
     });
   }
 
+  // Path lengkap gambar yang akan dihapus
+  const imagePath = path.join(
+    'public',
+    'images',
+    'taskImages',
+    path.basename(task.image),
+  );
+
+  // Hapus gambar jika ada
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      console.error('Gagal menghapus gambar!:', err);
+      return res.status(500).json({
+        status: 'fail',
+        message: 'Gagal menghapus gambar tugas',
+      });
+    }
+  });
+
+  // Hapus task
   await task.deleteOne();
 
   const reply = `Tugas dengan title '${task.title}' dengan ID '${task._id}' telah dihapus`;
