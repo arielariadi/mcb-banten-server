@@ -6,7 +6,7 @@ const generateToken = (user) => {
     email: user.email,
     role: user.role,
   };
-  return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1h' });
+  return jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: '1d' });
 };
 
 export default generateToken;
