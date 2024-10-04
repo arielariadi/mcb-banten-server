@@ -151,7 +151,12 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
   const totalPage = Math.ceil(totalSubmissions / limit);
 
   // Ambil submissions dengan pagination
-  const submissions = await Submission.find().skip(offset).limit(limit).lean();
+  const submissions = await Submission.find()
+    .skip(offset)
+    .limit(limit)
+    .populate('user', 'username') // mengambil value field 'username' dari 'user'
+    .populate('task', 'title description socialMediaUrl taskScreenshot')
+    .lean();
 
   res.status(200).json({
     status: 'success',
