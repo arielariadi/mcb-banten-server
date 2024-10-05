@@ -7,12 +7,12 @@ const withdrawalSchema = new mongoose.Schema({
     required: true,
   },
 
-  paymentMethod: {
+  withdrawalMethod: {
     type: String,
     required: true,
   },
 
-  paymentMethodNumber: {
+  withdrawalMethodNumber: {
     type: String,
     required: true,
   },
