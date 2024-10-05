@@ -20,6 +20,7 @@ const getSubmissionsHistory = asyncHandler(async (req, res) => {
   const totalPage = Math.ceil(totalSubmissions / limit);
 
   const submissions = await Submission.find({ user: userId })
+    .sort({ submittedAt: -1 })
     .skip(offset)
     .limit(limit)
     .lean();
@@ -56,6 +57,9 @@ const getWithdrawalsHistory = asyncHandler(async (req, res) => {
   const totalPage = Math.ceil(totalWithdrawals / limit);
 
   const withdrawals = await Withdrawal.find({ user: userId })
+    .sort({
+      requestedAt: -1,
+    })
     .skip(offset)
     .limit(limit)
     .lean();
@@ -90,7 +94,11 @@ const getAllTasks = asyncHandler(async (req, res) => {
   const totalTasks = await Task.countDocuments();
   const totalPage = Math.ceil(totalTasks / limit);
 
-  const tasks = await Task.find().skip(offset).limit(limit).lean();
+  const tasks = await Task.find()
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit)
+    .lean();
 
   if (!tasks) {
     return res
@@ -184,9 +192,9 @@ const submitCompletedTask = asyncHandler(async (req, res) => {
 // @route POST /v1/user/request-withdrawal
 // @access Private
 const requestWithdrawal = asyncHandler(async (req, res) => {
-  const { paymentMethod, paymentMethodNumber, amount } = req.body;
+  const { withdrawalMethod, withdrawalMethodNumber, amount } = req.body;
 
-  if (!paymentMethod || !paymentMethodNumber || !amount) {
+  if (!withdrawalMethod || !withdrawalMethodNumber || !amount) {
     return res.status(400).json({
       status: 'fail',
       message: 'Tolong isi semua data!',
@@ -219,8 +227,8 @@ const requestWithdrawal = asyncHandler(async (req, res) => {
 
   const withdrawal = await Withdrawal.create({
     user: user.id,
-    paymentMethod,
-    paymentMethodNumber,
+    withdrawalMethod,
+    withdrawalMethodNumber,
     amount,
   });
   if (withdrawal) {

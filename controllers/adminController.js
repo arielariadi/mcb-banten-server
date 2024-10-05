@@ -152,6 +152,7 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
 
   // Ambil submissions dengan pagination
   const submissions = await Submission.find()
+    .sort({ submittedAt: -1 })
     .skip(offset)
     .limit(limit)
     .populate('user', 'username') // mengambil value field 'username' dari 'user'
@@ -265,6 +266,35 @@ const rejectSubmission = asyncHandler(async (req, res) => {
     status: 'success',
     message: 'Submission ditolak!',
     data: updatedSubmission,
+  });
+});
+
+const getAllWithdrawals = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  // Hitung jumlah total submission
+  const totalWithdrawals = await Withdrawal.countDocuments();
+  const totalPage = Math.ceil(totalWithdrawals / limit);
+
+  // Ambil withdrawal dengan pagination
+  const withdrawals = await Withdrawal.find()
+    .sort({ requestedAt: -1 })
+    .skip(offset)
+    .limit(limit)
+    .populate('user', 'username alamat')
+    .lean();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua withdrawal',
+    data: withdrawals,
+    pagination: {
+      totalWithdrawals,
+      currentPage: page,
+      totalPage,
+    },
   });
 });
 
@@ -405,6 +435,7 @@ export {
   getAllSubmissions,
   acceptSubmission,
   rejectSubmission,
+  getAllWithdrawals,
   acceptRequestWithdrawal,
   rejectRequestWithdrawal,
   deleteTask,

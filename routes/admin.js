@@ -10,6 +10,7 @@ import {
   getAllSubmissions,
   acceptSubmission,
   rejectSubmission,
+  getAllWithdrawals,
   acceptRequestWithdrawal,
   rejectRequestWithdrawal,
   deleteTask,
@@ -48,7 +49,10 @@ router.patch(
   rejectSubmission,
 );
 
-// Endpoint untuk menerima request penarikan user
+// Endpoint untuk mendapatkan semua withdrawal
+router.get('/withdrawal-list', authenticateToken, isAdmin, getAllWithdrawals);
+
+// Endpoint untuk menerima request withdrawal user
 router.patch(
   '/accept-withdrawal',
   authenticateToken,
@@ -56,7 +60,7 @@ router.patch(
   acceptRequestWithdrawal,
 );
 
-// Endpoint untuk menolak request penarikan user
+// Endpoint untuk menolak request withdrawal user
 router.patch(
   '/reject-withdrawal',
   authenticateToken,
