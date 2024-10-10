@@ -58,8 +58,8 @@ const createNewTask = asyncHandler(async (req, res) => {
   }
 
   // Check for duplicate title
-  const duplicateTtile = await Task.findOne({ title }).lean().exec();
-  if (duplicateTtile) {
+  const duplicateTitle = await Task.findOne({ title }).lean().exec();
+  if (duplicateTitle) {
     return res
       .status(409)
       .json({ status: 'fail', message: 'Title sudah digunakan!' });
@@ -152,7 +152,6 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
 
   // Ambil submissions dengan pagination
   const submissions = await Submission.find()
-    .sort({ submittedAt: -1 })
     .skip(offset)
     .limit(limit)
     .populate('user', 'username') // mengambil value field 'username' dari 'user'
@@ -280,7 +279,6 @@ const getAllWithdrawals = asyncHandler(async (req, res) => {
 
   // Ambil withdrawal dengan pagination
   const withdrawals = await Withdrawal.find()
-    .sort({ requestedAt: -1 })
     .skip(offset)
     .limit(limit)
     .populate('user', 'username alamat')
@@ -408,8 +406,8 @@ const rejectRequestWithdrawal = asyncHandler(async (req, res) => {
 
   // Update status withdrawal dan tambahkan rejectedBy serta rejectedAt
   withdrawal.status = 'rejected';
-  withdrawal.rejectedBy = req.user.id;
-  withdrawal.rejectedAt = Date.now();
+  withdrawal.validatedBy = req.user.id;
+  withdrawal.validatedAt = Date.now();
   withdrawal.rejectedReason = rejectedReason;
 
   // Simpan withdrawal yang telah diperbarui

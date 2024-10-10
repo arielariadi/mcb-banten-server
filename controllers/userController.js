@@ -94,11 +94,7 @@ const getAllTasks = asyncHandler(async (req, res) => {
   const totalTasks = await Task.countDocuments();
   const totalPage = Math.ceil(totalTasks / limit);
 
-  const tasks = await Task.find()
-    .sort({ createdAt: -1 })
-    .skip(offset)
-    .limit(limit)
-    .lean();
+  const tasks = await Task.find().skip(offset).limit(limit).lean();
 
   if (!tasks) {
     return res
