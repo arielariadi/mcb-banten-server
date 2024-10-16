@@ -6,6 +6,32 @@ import Withdrawal from '../models/withdrawalModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
+// @desc Get all users
+// @route GET /v1/user/list-users
+// @access Private
+const getAllUsers = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
+  // Hitung jumlah total user
+  const totalUsers = await User.countDocuments();
+  const totalPage = Math.ceil(totalUsers / limit);
+
+  const users = await User.find().select('-password').lean();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Sukses mengambil semua user',
+    data: users,
+    pagination: {
+      totalUsers,
+      currentPage: page,
+      totalPage,
+    },
+  });
+});
+
 // @desc Get all user submissions history
 // @route GET /v1/user/submissions-history
 // @access Private
@@ -23,6 +49,7 @@ const getSubmissionsHistory = asyncHandler(async (req, res) => {
     .sort({ submittedAt: -1 })
     .skip(offset)
     .limit(limit)
+    .populate('task', 'title description image')
     .lean();
 
   if (!submissions) {
@@ -242,6 +269,7 @@ const requestWithdrawal = asyncHandler(async (req, res) => {
 });
 
 export {
+  getAllUsers,
   getAllTasks,
   getTaskById,
   submitCompletedTask,

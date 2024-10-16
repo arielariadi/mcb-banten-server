@@ -3,6 +3,7 @@ const router = express.Router();
 
 import { authenticateToken } from '../middleware/authMiddleware.js';
 import {
+  getAllUsers,
   getAllTasks,
   getTaskById,
   submitCompletedTask,
@@ -12,6 +13,9 @@ import {
 } from '../controllers/userController.js';
 
 import proofOfTasks from '../middleware/proofOfTaskMiddleware.js';
+
+// Endpoint untuk mendapatkan semua user
+router.get('/users-list', authenticateToken, getAllUsers);
 
 // Endpoint untuk mendapatkan riwayat submission (untuk dashboard user)
 router.get('/submissions-history', authenticateToken, getSubmissionsHistory);

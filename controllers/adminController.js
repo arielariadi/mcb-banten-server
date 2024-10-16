@@ -8,32 +8,6 @@ import asyncHandler from 'express-async-handler';
 import fs from 'fs';
 import path from 'path';
 
-// @desc Get all users
-// @route GET /v1/admin/list-users
-// @access Private/Admin
-const getAllUsers = asyncHandler(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const offset = (page - 1) * limit;
-
-  // Hitung jumlah total user
-  const totalUsers = await User.countDocuments();
-  const totalPage = Math.ceil(totalUsers / limit);
-
-  const users = await User.find().select('-password').lean();
-
-  res.status(200).json({
-    status: 'success',
-    message: 'Sukses mengambil semua user',
-    data: users,
-    pagination: {
-      totalUsers,
-      currentPage: page,
-      totalPage,
-    },
-  });
-});
-
 // @desc Create new Task
 // @route POST /v1/admin/create-task
 // @access Private/Admin
@@ -428,7 +402,6 @@ const rejectRequestWithdrawal = asyncHandler(async (req, res) => {
 });
 
 export {
-  getAllUsers,
   createNewTask,
   getAllSubmissions,
   acceptSubmission,

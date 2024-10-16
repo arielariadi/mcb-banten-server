@@ -5,7 +5,6 @@ import { authenticateToken } from '../middleware/authMiddleware.js';
 import isAdmin from '../middleware/adminMiddleware.js';
 import taskImage from '../middleware/taskImageMiddleware.js';
 import {
-  getAllUsers,
   createNewTask,
   getAllSubmissions,
   acceptSubmission,
@@ -17,9 +16,6 @@ import {
 } from '../controllers/adminController.js';
 
 // ENDPOINT INI HANYA BISA DIAKSES OLEH ADMIN SAJA
-
-// Endpoint untuk mendapatkan semua user
-router.get('/users-list', authenticateToken, isAdmin, getAllUsers);
 
 // Endpoint untuk membuat task
 router.post(
