@@ -4,19 +4,23 @@ import asyncHandler from 'express-async-handler';
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const token = await loginService(email, password);
-  res
-    .status(200)
-    .json({ status: 'success', message: 'Login success!', token: token });
+  const { token, user } = await loginService(email, password);
+  res.status(200).json({
+    status: 'success',
+    message: 'Login success!',
+    token: token,
+    user: user,
+  });
 });
 
 const refreshToken = asyncHandler(async (req, res) => {
   const { token } = req.body;
-  const newToken = await refreshTokenService(token);
+  const { token: newToken, user } = await refreshTokenService(token);
   res.status(200).json({
     status: 'success',
     message: 'Refresh token success!',
-    newToken: newToken,
+    token: newToken,
+    user: user,
   });
 });
 

@@ -10,26 +10,40 @@ const loginService = asyncHandler(async (email, password) => {
     throw new Error('User does not exist!');
   }
 
-  const isPasswordValid = bcrypt.compare(password, existingUser.password);
+  const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
   if (!isPasswordValid) {
     throw new Error('Incorrect password!');
   }
 
   const token = generateToken(existingUser);
-  return token;
+  return {
+    token,
+    user: {
+      id: existingUser._id,
+      email: existingUser.email,
+      role: existingUser.role,
+    },
+  };
 });
 
 const refreshTokenService = asyncHandler(async (oldToken) => {
   const decodedToken = verifyToken(oldToken);
-  const user = User.findById(decodedToken._id);
+  const user = await User.findById(decodedToken._id);
 
   if (!user) {
     throw new Error('User not found!');
   }
 
   const newToken = generateToken(user);
-  return newToken;
+  return {
+    token: newToken,
+    user: {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    },
+  };
 });
 
 export { loginService, refreshTokenService };

@@ -231,10 +231,22 @@ const submitCompletedTask = asyncHandler(async (req, res) => {
 const requestWithdrawal = asyncHandler(async (req, res) => {
   const { withdrawalMethod, withdrawalMethodNumber, amount } = req.body;
 
-  if (!withdrawalMethod || !withdrawalMethodNumber || !amount) {
+  // Validsai karakter
+  const validInputRegex = /^[a-zA-Z0-9\s.,!?'-]*$/;
+  const validMethodNumberRegex = /^[0-9-]+$/;
+  const validAmountRegex = /^[0-9]+$/;
+
+  if (
+    !withdrawalMethod ||
+    !withdrawalMethodNumber ||
+    !amount ||
+    !validInputRegex.test(withdrawalMethod) ||
+    !validMethodNumberRegex.test(withdrawalMethodNumber) ||
+    !validAmountRegex.test(amount)
+  ) {
     return res.status(400).json({
       status: 'fail',
-      message: 'Tolong isi semua data!',
+      message: 'Tolong isi semua data dengan benar!',
     });
   }
 
