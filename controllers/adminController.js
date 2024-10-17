@@ -126,6 +126,7 @@ const getAllSubmissions = asyncHandler(async (req, res) => {
 
   // Ambil submissions dengan pagination
   const submissions = await Submission.find()
+    .sort({ submittedAt: 1 })
     .skip(offset)
     .limit(limit)
     .populate('user', 'username') // mengambil value field 'username' dari 'user'
@@ -253,6 +254,7 @@ const getAllWithdrawals = asyncHandler(async (req, res) => {
 
   // Ambil withdrawal dengan pagination
   const withdrawals = await Withdrawal.find()
+    .sort({ requestedAt: 1 })
     .skip(offset)
     .limit(limit)
     .populate('user', 'username alamat')

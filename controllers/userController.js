@@ -172,14 +172,28 @@ const getTaskById = asyncHandler(async (req, res) => {
 const submitCompletedTask = asyncHandler(async (req, res) => {
   const { task, description } = req.body;
 
+  // Validasi karakter
+  const validInputRegex = /^[a-zA-Z0-9\s.,!?'-]*$/;
+
+  if (
+    !task ||
+    !description ||
+    !validInputRegex.test(task) ||
+    !validInputRegex.test(description)
+  ) {
+    return res
+      .status(400)
+      .json({ status: 'fail', message: 'Tolong isi semua data dengan benar!' });
+  }
+
   // Ambil nama file dari req.file
   const taskScreenshot = req.file.path.replace(/^.*[\\\/]/, '');
   const relativeImagePath = `images/proofOfTasks/${taskScreenshot}`; // jalur relatif gambar
 
-  if (!task || !relativeImagePath || !description) {
+  if (!relativeImagePath) {
     return res
       .status(400)
-      .json({ status: 'fail', message: 'Tolong isi semua data!' });
+      .json({ status: 'fail', message: 'Gambar tidak ditemukan!' });
   }
 
   // Dapatkan user dari token autentikasi
