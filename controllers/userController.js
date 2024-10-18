@@ -307,8 +307,6 @@ const requestWithdrawal = asyncHandler(async (req, res) => {
 // @route PATCH /v1/user/update-profile
 // @access Private
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { username, alamat, jenisKelamin, tanggalLahir, noHp } = req.body;
-
   // Validasi input
   const schema = Joi.object({
     username: Joi.string().min(3).max(30),
@@ -318,13 +316,15 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     noHp: Joi.string().pattern(/^[0-9]{10,14}$/),
   });
 
-  const { error } = schema.validate(req.body);
+  const { error, value } = schema.validate(req.body, { abortEarly: false });
   if (error) {
     return res.status(400).json({
       status: 'fail',
       message: error.details[0].message,
     });
   }
+
+  const { username, alamat, jenisKelamin, tanggalLahir, noHp } = value;
 
   // Dapatkan user dari token autentikasi
   const user = await User.findById(req.user.id);
@@ -335,17 +335,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     });
   }
 
-  // user.username = username || user.username;
-  // user.alamat = alamat || user.alamat;
-  // user.jenisKelamin = jenisKelamin || user.jenisKelamin;
-  // user.tanggalLahir = tanggalLahir || user.tanggalLahir;
-  // user.noHp = noHp || user.noHp;
-
   if (username) user.username = sanitize(username);
   if (alamat) user.alamat = sanitize(alamat);
-  if (jenisKelamin) user.jenisKelamin = sanitize(jenisKelamin);
-  if (tanggalLahir) user.tanggalLahir = sanitize(tanggalLahir);
-  if (noHp) user.noHp = sanitize(noHp);
+  if (jenisKelamin) user.jenisKelamin = jenisKelamin;
+  if (tanggalLahir) user.tanggalLahir = tanggalLahir;
+  if (noHp) user.noHp = noHp;
 
   const updatedUser = await user.save();
 

@@ -38,6 +38,7 @@ const createNewUser = asyncHandler(async (req, res) => {
     });
   }
 
+  // Menggunakan value karena sudah lolos dari tahap validasi input dari Joi
   const { username, email, noHp, ...userData } = value;
 
   // Sanitize input
