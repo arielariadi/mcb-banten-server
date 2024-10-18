@@ -10,6 +10,7 @@ import {
   requestWithdrawal,
   getSubmissionsHistory,
   getWithdrawalsHistory,
+  updateUserProfile,
 } from '../controllers/userController.js';
 
 import proofOfTasks from '../middleware/proofOfTaskMiddleware.js';
@@ -40,3 +41,6 @@ router.post(
 // Endpoint untuk melakukan request penarikan pada user
 router.post('/request-withdrawal', authenticateToken, requestWithdrawal);
 export default router;
+
+// Endpoint untuk update user profile
+router.patch('/update-profile', authenticateToken, updateUserProfile);

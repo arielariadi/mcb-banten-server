@@ -6,6 +6,16 @@ import Withdrawal from '../models/withdrawalModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
+import Joi from 'joi';
+import sanitizeHtml from 'sanitize-html';
+
+function sanitize(input) {
+  return sanitizeHtml(input, {
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+}
+
 // @desc Get all users
 // @route GET /v1/user/list-users
 // @access Private
@@ -294,6 +304,72 @@ const requestWithdrawal = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Update user profile
+// @route PATCH /v1/user/update-profile
+// @access Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const { username, alamat, jenisKelamin, tanggalLahir, noHp } = req.body;
+
+  // Validasi input
+  const schema = Joi.object({
+    username: Joi.string().min(3).max(30),
+    alamat: Joi.string().max(100),
+    jenisKelamin: Joi.string().valid('Laki-laki', 'Perempuan'),
+    tanggalLahir: Joi.date().iso(),
+    noHp: Joi.string().pattern(/^[0-9]{10,14}$/),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({
+      status: 'fail',
+      message: error.details[0].message,
+    });
+  }
+
+  // Dapatkan user dari token autentikasi
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'User tidak ditemukan!',
+    });
+  }
+
+  // user.username = username || user.username;
+  // user.alamat = alamat || user.alamat;
+  // user.jenisKelamin = jenisKelamin || user.jenisKelamin;
+  // user.tanggalLahir = tanggalLahir || user.tanggalLahir;
+  // user.noHp = noHp || user.noHp;
+
+  if (username) user.username = sanitize(username);
+  if (alamat) user.alamat = sanitize(alamat);
+  if (jenisKelamin) user.jenisKelamin = sanitize(jenisKelamin);
+  if (tanggalLahir) user.tanggalLahir = sanitize(tanggalLahir);
+  if (noHp) user.noHp = sanitize(noHp);
+
+  const updatedUser = await user.save();
+
+  // Select specific field to return
+  const userToReturn = await User.findById(updatedUser._id).select(
+    'username alamat jenisKelamin tanggalLahir noHp',
+  );
+
+  if (updatedUser) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'Profil user diperbarui!',
+      data: userToReturn,
+    });
+  } else {
+    console.error('Error updating user profile:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Terjadi kesalahan saat memperbarui profil user.',
+    });
+  }
+});
+
 export {
   getAllUsers,
   getAllTasks,
@@ -302,4 +378,5 @@ export {
   requestWithdrawal,
   getSubmissionsHistory,
   getWithdrawalsHistory,
+  updateUserProfile,
 };
