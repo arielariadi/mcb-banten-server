@@ -9,12 +9,11 @@ import mongoose from 'mongoose';
 import Joi from 'joi';
 import sanitizeHtml from 'sanitize-html';
 
-function sanitize(input) {
-  return sanitizeHtml(input, {
+const sanitize = (input) =>
+  sanitizeHtml(input, {
     allowedTags: [],
     allowedAttributes: {},
   });
-}
 
 // @desc Get all users
 // @route GET /v1/user/list-users
