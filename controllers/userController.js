@@ -312,7 +312,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     username: Joi.string().min(3).max(30),
     alamat: Joi.string().max(100),
     jenisKelamin: Joi.string().valid('Laki-laki', 'Perempuan'),
-    tanggalLahir: Joi.date().iso(),
+    tanggalLahir: Joi.date().iso().max('now'),
     noHp: Joi.string().pattern(/^[0-9]{10,14}$/),
   });
 

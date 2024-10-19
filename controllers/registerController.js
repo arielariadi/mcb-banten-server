@@ -24,7 +24,7 @@ const userSchema = Joi.object({
   password: Joi.string().min(6).required(),
   alamat: Joi.string().max(100),
   jenisKelamin: Joi.string().valid('Laki-laki', 'Perempuan'),
-  tanggalLahir: Joi.date().iso(),
+  tanggalLahir: Joi.date().iso().max('now'),
 });
 
 const createNewUser = asyncHandler(async (req, res) => {
@@ -33,7 +33,8 @@ const createNewUser = asyncHandler(async (req, res) => {
   if (error) {
     return res.status(400).json({
       status: 'fail',
-      message: 'Validasi gagal',
+      message:
+        'Terjadi kesalahan pada input. Tolong cek kembali data input anda!',
       errors: error.details.map((detail) => detail.message),
     });
   }
